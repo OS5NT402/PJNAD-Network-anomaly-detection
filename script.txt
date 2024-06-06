@@ -1,0 +1,25 @@
+/* Dos */
+python2 Dos.py
+
+/* Bruteforce */
+sudo hydra -V -f -t 4 -l msfadmin -P rockyou.txt ssh://192.168.5.10
+
+/* Benign
+watch -n 5 "curl http://192.168.5.10" 
+
+/* Probe
+nmap -sC -sV -oA project 192.168.5.10
+
+/* Change to csv
+tshark -r Normal20000.pcap -T fields -E header=y -E separator=, -E quote=d -E occurrence=f -e ip.src -e ip.dst -e ip.len -e ip.flags.df -e ip.flags.mf \-e ip.fragment -e ip.fragment.count -e ip.fragments -e ip.ttl -e ip.proto -e tcp.window_size -e tcp.ack -e tcp.seq -e tcp.len -e tcp.stream -e tcp.urgent_pointer \-e tcp.flags -e tcp.analysis.ack_rtt -e tcp.segments -e tcp.reassembled.length -e http.request -e udp.port -e frame.time_relative -e frame.time_delta -e tcp.time_relative -e tcp.time_delta > Normal20000.csv
+
+/* Step1 */
+Benign Probe Normal : python3 step1.py Benign.csv
+Dos : python3 step1_Dos.py Dos5000.csv
+
+/* Step2
+python2 step2.py 2 updated_Normal20000.csv
+*Edit : use number in class attack. (Benign=1 Dos=2 Probe=3 Normal=4)
+
+/* Merge File is use 1 header */
+awk '(NR == 1) || (FNR > 1)' 1_updated_Benign20000.csv 2_updated_Dos20000.csv 3_updated_Probe20000.csv 4_updated_Normal20000.csv > Combine_20000_packets.csv
